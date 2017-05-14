@@ -1,10 +1,31 @@
 import requests
 import json
 import pocket_constants
+
 class PocketRetrieve:
 
     def __init__(self):
         pass
+
+    def preRetrieve(self):
+        optionParams = []
+        print pocket_constants.retrieveOptions
+        choices = raw_input("Please input your choices from the above, separated by comma: ").lower()
+        choiceslist = choices.replace(' ', '').split(',')
+        print choiceslist
+        counter = 1
+        for choice in choiceslist:
+            print choice
+            response = self.mapRetrieveInput(choice)
+            print counter
+            counter += 1
+            if response != 'No match':
+                optionParams.append(response)
+                for param in optionParams:
+                    for key in param:
+                        if param[key] == '_to_be_replaced_':
+                            param[key] = raw_input('pls enter a value for ' + key + ':')
+        return self.retrieve(optionParams)
 
     def retrieve(self,optionalParameters=None):
         """
@@ -20,55 +41,87 @@ class PocketRetrieve:
         oResponse = requests.post(pocket_constants.strRetrieveURL, data=json.dumps(oPayload), headers=pocket_constants.oHeaders)
         return json.loads(oResponse.text)
 
-    def generateTag(self,oArticle):
-        """
-        Generate a tag based on word count of the article, rounded to nearest
-        five minutes.
-        """
-        iWordCount = int(oArticle['word_count'])
-        strTag = self.rounder(iWordCount / pocket_constants.iWordsPerMinute)
-        if strTag < 15:
-            strTag = 'short_reads'
-        oJSONTag = {'action':'tags_add','item_id': oArticle['item_id'],'tags':strTag}
-        return oJSONTag
+    def mapRetrieveInput(self,x):
+        # TODO Fix the bug that is running each of the functions in this
+        # each time that mapRetrieveInput is called
+        return {
+            'state': self.mapState(),
+            'favorite': self.mapFavorited(),
+            'tag': pocket_constants.tag,
+            'untagged': pocket_constants.untagged,
+            'contenttype': self.mapContentType,
+            'sort': self.mapSort(),
+            'detailtype': self.mapDetailType(),
+            'search': pocket_constants.search,
+            'domain': pocket_constants.domain,
+            'since': pocket_constants.since,
+            'count': pocket_constants.count,
+            'offset': pocket_constants.offset
+        }.get(x, "No match")
 
-    def sendRequest(self,oActions):
-        """
-        Send request to Pocket with tags to add to articles.  Send as batch to
-        avoid hitting rate limiter.
-        """
-        oPayload = {'access_token':pocket_constants.strToken,'consumer_key':pocket_constants.strConsumerKey,'actions':oActions}
-
-        requests.post(pocket_constants.strModifyURL, data=json.dumps(oPayload), headers=pocket_constants.oHeaders)
-        return
-
-    def rounder(self,iNumber):
-        """
-        Round estimated reading time to the nearest five minutes, to avoid too
-        many tags.
-        """
-        return int(pocket_constants.iRoundBase * round(float(iNumber)/pocket_constants.iRoundBase))
-
-    def tagUntaggedItems(self):
-        """
-        Do the thing.
-        """
-        oArticles = self.retrieve([pocket_constants.untagged])
-        oJSONPayload = []
-        for oArticle in oArticles.get('list').items():
-            if oArticle[1]['is_article'] == '1':
-                oJSONPayload.append(self.generateTag(oArticle[1]))
-        self.sendRequest(oJSONPayload)
-
-    def writeArticlesToFile(tag=None):
-        if tag:
-            strFilename = tag+"Articles.txt"
+    def mapState(self):
+        print '(All, Archived, Unread)'
+        state = raw_input('Please enter the state you would like to retrieve: ').lower()
+        matchedState = {
+            'all': pocket_constants.stateAll,
+            'archived': pocket_constants.stateArchived,
+            'unread': pocket_constants.stateUnread
+        }.get(state, "No match")
+        if matchedState == 'No match':
+            return self.mapState()
         else:
-            strFilename = "Articles.json"
-        file_object = open(strFilename, "a")
-        file_object.write(json.dumps(retrieve(tag)))
+            return matchedState
 
-    def writeArchiveToFile():
-        strFilename = "Archive.json"
-        file_object = open(strFilename, "a")
-        file_object.write(json.dumps(retrieve()))
+    def mapFavorited(self):
+        print '(Favorited, Not Favorited)'
+        favorite = raw_input('Please enter the favorited state you would like to retrieve: ').lower()
+        matchedFavorite = {
+            'favorited': pocket_constants.favorited,
+            'not favorited': pocket_constants.notFavorited
+        }.get(favorite, "No match")
+        if matchedFavorite == 'No match':
+            return self.mapFavorited()
+        else:
+            return matchedFavorite
+
+    def mapContentType(self):
+        print '(Article, Image, Video)'
+        contentType = raw_input('Please enter the content type you would like to retrieve: ').lower()
+        matchedContentType = {
+            'article': pocket_constants.contentTypeArticle,
+            'image': pocket_constants.contentType,
+            'video': pocket_constants.contentTypeVideo
+        }.get(contentType, "No match")
+        if matchedContentType == 'No match':
+            return self.mapContentType()
+        else:
+            return matchedContentType
+
+    def mapSort(self):
+        print '(newest, oldest, site, title)'
+        sort = raw_input('Please enter the sorting you would like to apply: ').lower()
+        matchedSort = {
+            'newest': pocket_constants.sortNewest,
+            'oldest': pocket_constants.sortOldest,
+            'site': pocket_constants.sortSite,
+            'title': pocket_constants.sortTitle
+        }.get(sort, "No match")
+        if matchedSort == 'No match':
+            return self.mapSort()
+        else:
+            return matchedSort
+
+    def mapDetailType(self):
+        print '(simple, complete)'
+        detailType = raw_input('Please enter the detail level you would like to retrieve: ').lower()
+        matchedDetailType = {
+            'simple': pocket_constants.detailTypeSimple,
+            'complete': pocket_constants.detailTypeComplete
+        }.get(detailType, "No match")
+        if matchedDetailType == 'No match':
+            return self.mapDetailType()
+        else:
+            return matchedDetailType
+
+    def postRetrieve():
+        pass

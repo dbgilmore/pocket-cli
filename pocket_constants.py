@@ -8,8 +8,8 @@ stateArchived = {'state':'archive'}
 stateUnread = {'state':'unread'}
 stateAll = {'state':'all'}
 
-favourited = {'favorite':1}
-notFavourited = {'favorite':0}
+favorited = {'favorite':1}
+notFavorited = {'favorite':0}
 
 untagged = {'tag':'_untagged_'}
 tag = {'tag':'_to_be_replaced_'}
@@ -45,3 +45,21 @@ strAddURL = 'https://getpocket.com/v3/add'
 retrieveText = '(R)etrieve some articles'
 modifyText = '(M)odify an existing article in Pocket'
 addText = '(A)dd an article to Pocket'
+tagUntaggedItemsText = '(T)ag untagged items based on estimated time to read'
+exitText = '(E)xit'
+
+# TODO give more detail
+retrieveOptions = """
+state - unread, archived, all
+favorite - favorited, not favorited
+tag - any tag
+untagged - untagged items
+contentType - articles, images, videos
+sort - newest, oldest, site, title
+detailType - simple, complete
+search - search based on title and url
+domain - search on article domain
+since - lol timestamp stuff
+count - only return X number of items
+offset - use with count
+"""

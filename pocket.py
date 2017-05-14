@@ -1,52 +1,40 @@
 import pocket_constants
 from pocket_retrieve import PocketRetrieve
+from pocket_modify import PocketModify
+from pocket_time_tagger import PocketTimeTagger
 
 class Pocket:
 
     def __init__(self):
         self.pocketRetriever = PocketRetrieve()
+        self.pocketModifier = PocketModify()
+        self.pocketTimeTagger = PocketTimeTagger()
+        self.programRunning = True;
 
     def mapInitialInput(self,x):
         return {
-            'R': self.preRetrieve,
+            'R': self.pocketRetriever.preRetrieve,
             'A': self.fakeNews,
-            'M': self.fakeNews
+            'M': self.pocketModifier.preModify,
+            'T': self.pocketTimeTagger.tagUntaggedItems,
+            'E': self.terminate
         }.get(x, self.whatDoesTheUserWantToDo)
 
     def fakeNews(self):
         print 'fake news'
 
-    def mapRetrieveInput(self,x):
-        return {
-            'T': pocket_constants.tag,
-            'U': pocket_constants.untagged,
-        }.get(x, "No match")
-
-    def preRetrieve(self):
-        optionParams = []
-        print "Provide options"
-        choices = raw_input("Please input your choices, separated by comma: ").upper()
-        choiceslist = choices.replace(' ', '').split(',')
-        print choiceslist
-        for choice in choiceslist:
-            response = self.mapRetrieveInput(choice)
-            if response != 'No match':
-                optionParams.append(response)
-                for param in optionParams:
-                    for key in param:
-                        if param[key] == '_to_be_replaced_':
-                            param[key] = raw_input('pls enter a value for ' + key + ':')
-        self.pocketRetriever.retrieve(optionParams)
-
-        def postRetrieve():
-            pass
+    def terminate(self):
+        self.programRunning = False
 
     def whatDoesTheUserWantToDo(self):
-        print pocket_constants.retrieveText
-        print pocket_constants.addText
-        print pocket_constants.modifyText
-        selectedOption = raw_input("Please select one of the above options: ").upper()
-        self.mapInitialInput(selectedOption)()
+        while self.programRunning:
+            print pocket_constants.retrieveText
+            print pocket_constants.addText
+            print pocket_constants.modifyText
+            print pocket_constants.tagUntaggedItemsText
+            print pocket_constants.exitText
+            selectedOption = raw_input("Please select one of the above options: ").upper()
+            self.mapInitialInput(selectedOption)()
 
 if __name__ == '__main__':
     Pocket().whatDoesTheUserWantToDo()
