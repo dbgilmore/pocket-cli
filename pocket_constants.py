@@ -1,8 +1,13 @@
 import pocket_token
+import json
 """
 Pocket Constants
 """
-
+creds_file = file(".creds", 'r')
+creds = json.loads(creds_file.read())
+creds_file.close()
+strToken = creds['access_token']
+strConsumerKey = creds['consumer_key']
 
 stateArchived = {'state':'archive'}
 stateUnread = {'state':'unread'}
@@ -32,8 +37,7 @@ since = {'since':'_to_be_replaced_'}
 count = {'count':'_to_be_replaced_'}
 offset = {'offset':'_to_be_replaced_'}
 
-strToken = pocket_token.strToken
-strConsumerKey = '66916-1b15c9e7b794b61fa7840d73'
+
 iWordsPerMinute = 250
 iRoundBase = 5
 strUntagged = '_untagged_'
