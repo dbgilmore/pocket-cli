@@ -1,4 +1,3 @@
-import pocket_token
 import json
 """
 Pocket Constants

@@ -31,7 +31,7 @@ class PocketTimeTagger:
         """
         Do the thing.
         """
-        oArticles = self.pocketRetriever.retrieve([pocket_constants.untagged])
+        oArticles = self.pocketRetriever.retrieve(pocket_constants.untagged)
         oJSONPayload = []
         for oArticle in oArticles.get('list').items():
             if oArticle[1]['is_article'] == '1':

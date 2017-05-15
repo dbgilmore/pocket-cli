@@ -8,24 +8,23 @@ class PocketRetrieve:
         pass
 
     def preRetrieve(self):
-        optionParams = []
+        optionParams = {}
         print pocket_constants.retrieveOptions
         choices = raw_input("Please input your choices from the above, separated by comma: ").lower()
         choiceslist = choices.replace(' ', '').split(',')
 
         for choice in choiceslist:
-            if choice in {"state","favorited","tag","untagged","contenttype","sort","detailtype","search","domain","since","count","offset"}:
-                response = self.mapRetrieveInput(choice)
-                # Nasty hack - check is the returned thing is a function.
-                # If it is, call it
-                if callable(response):
-                    response = response()
 
-                optionParams.append(response)
-                for param in optionParams:
-                    for key in param:
-                        if param[key] == '_to_be_replaced_':
-                            param[key] = raw_input('Please enter a value for ' + key + ':')
+            response = self.mapRetrieveInput(choice)
+            # Nasty hack - check if the returned thing is a function.
+            # If it is, call it
+            if callable(response):
+                response = response()
+            optionParams[choice] = response.get(choice)
+
+            if response.get(choice) == '_to_be_replaced_':
+                optionParams[choice] = raw_input('Please enter a value for ' + choice + ':')
+
         return self.retrieve(optionParams)
 
     def retrieve(self,optionalParameters=None):
@@ -36,10 +35,11 @@ class PocketRetrieve:
         oPayload = {'access_token':pocket_constants.strToken,'consumer_key':pocket_constants.strConsumerKey}
         if optionalParameters!=None:
             for param in optionalParameters:
-                for key in param:
-                    oPayload[key] = param[key]
+                oPayload[param] = optionalParameters[param]
 
         oResponse = requests.post(pocket_constants.strRetrieveURL, data=json.dumps(oPayload), headers=pocket_constants.oHeaders)
+        #  TODO do something more with the response
+        print oResponse.text
         return json.loads(oResponse.text)
 
     def mapRetrieveInput(self,x):
@@ -58,7 +58,7 @@ class PocketRetrieve:
             'offset': pocket_constants.offset
         }.get(x, "No match")
         if matchedInput == 'No match':
-            return self.mapRetrieveInput(x)
+            return self.preRetrieve()
         else:
             return matchedInput
 

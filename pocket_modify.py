@@ -8,8 +8,8 @@ class PocketModify:
     def __init__(self):
         self.pocketRetriever = PocketRetrieve()
 
-    def preModify(self):
-        self.modify([])
+    def preModify(self,oJSONPayload):
+        self.modify(oJSONPayload)
 
     def modify(self,oActions):
         """
