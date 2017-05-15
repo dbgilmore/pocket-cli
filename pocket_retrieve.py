@@ -12,19 +12,20 @@ class PocketRetrieve:
         print pocket_constants.retrieveOptions
         choices = raw_input("Please input your choices from the above, separated by comma: ").lower()
         choiceslist = choices.replace(' ', '').split(',')
-        print choiceslist
-        counter = 1
+
         for choice in choiceslist:
-            print choice
-            response = self.mapRetrieveInput(choice)
-            print counter
-            counter += 1
-            if response != 'No match':
+            if choice in {"state","favorited","tag","untagged","contenttype","sort","detailtype","search","domain","since","count","offset"}:
+                response = self.mapRetrieveInput(choice)
+                # Nasty hack - check is the returned thing is a function.
+                # If it is, call it
+                if callable(response):
+                    response = response()
+
                 optionParams.append(response)
                 for param in optionParams:
                     for key in param:
                         if param[key] == '_to_be_replaced_':
-                            param[key] = raw_input('pls enter a value for ' + key + ':')
+                            param[key] = raw_input('Please enter a value for ' + key + ':')
         return self.retrieve(optionParams)
 
     def retrieve(self,optionalParameters=None):
@@ -42,22 +43,24 @@ class PocketRetrieve:
         return json.loads(oResponse.text)
 
     def mapRetrieveInput(self,x):
-        # TODO Fix the bug that is running each of the functions in this
-        # each time that mapRetrieveInput is called
-        return {
-            'state': self.mapState(),
-            'favorite': self.mapFavorited(),
+        matchedInput = {
+            'state': self.mapState,
+            'favorite': self.mapFavorited,
             'tag': pocket_constants.tag,
             'untagged': pocket_constants.untagged,
             'contenttype': self.mapContentType,
-            'sort': self.mapSort(),
-            'detailtype': self.mapDetailType(),
+            'sort': self.mapSort,
+            'detailtype': self.mapDetailType,
             'search': pocket_constants.search,
             'domain': pocket_constants.domain,
             'since': pocket_constants.since,
             'count': pocket_constants.count,
             'offset': pocket_constants.offset
         }.get(x, "No match")
+        if matchedInput == 'No match':
+            return self.mapRetrieveInput(x)
+        else:
+            return matchedInput
 
     def mapState(self):
         print '(All, Archived, Unread)'
