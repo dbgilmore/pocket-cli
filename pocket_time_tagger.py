@@ -13,6 +13,7 @@ class PocketTimeTagger:
         Generate a tag based on word count of the article, rounded to nearest
         five minutes.
         """
+        # This is a test
         iWordCount = int(oArticle['word_count'])
         strTag = self.rounder(iWordCount / pocket_constants.iWordsPerMinute)
         if strTag < 15:
@@ -31,7 +32,7 @@ class PocketTimeTagger:
         """
         Do the thing.
         """
-        oArticles = self.pocketRetriever.retrieve()
+        oArticles = self.pocketRetriever.retrieve([pocket_constants.untagged])
         oJSONPayload = []
         for oArticle in oArticles.get('list').items():
             if oArticle[1]['is_article'] == '1':
