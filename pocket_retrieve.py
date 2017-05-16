@@ -1,6 +1,8 @@
 import requests
 import json
 import pocket_constants
+import pprint
+
 
 class PocketRetrieve:
 
@@ -10,7 +12,8 @@ class PocketRetrieve:
     def preRetrieve(self):
         optionParams = {}
         print pocket_constants.retrieveOptions
-        choices = raw_input("Please input your choices from the above, separated by comma: ").lower()
+        choices = raw_input('Please input your choices from the above, '
+                            'separated by comma: ').lower()
         choiceslist = choices.replace(' ', '').split(',')
 
         for choice in choiceslist:
@@ -20,29 +23,38 @@ class PocketRetrieve:
             # If it is, call it
             if callable(response):
                 response = response()
+
             optionParams[choice] = response.get(choice)
 
             if response.get(choice) == '_to_be_replaced_':
-                optionParams[choice] = raw_input('Please enter a value for ' + choice + ':')
+                optionParams[choice] = raw_input('Please enter a '
+                                                 'value for ' + choice + ':')
 
         return self.retrieve(optionParams)
 
-    def retrieve(self,optionalParameters=None):
+    def retrieve(self, optionalParameters=None):
         """
         Retrieve list of articles from Pocket.
         """
 
-        oPayload = {'access_token':pocket_constants.strToken,'consumer_key':pocket_constants.strConsumerKey}
-        if optionalParameters!=None:
+        oPayload = {
+            'access_token': pocket_constants.strToken,
+            'consumer_key': pocket_constants.strConsumerKey}
+
+        if optionalParameters is not None:
             for param in optionalParameters:
                 oPayload[param] = optionalParameters[param]
 
-        oResponse = requests.post(pocket_constants.strRetrieveURL, data=json.dumps(oPayload), headers=pocket_constants.oHeaders)
+        oResponse = requests.post(pocket_constants.strRetrieveURL,
+                                  data=json.dumps(oPayload),
+                                  headers=pocket_constants.oHeaders)
         #  TODO do something more with the response
-        print oResponse.text
+
+        pp = pprint.PrettyPrinter(indent=2)
+        pp.pprint(json.loads(oResponse.text))
         return json.loads(oResponse.text)
 
-    def mapRetrieveInput(self,x):
+    def mapRetrieveInput(self, x):
         matchedInput = {
             'state': self.mapState,
             'favorite': self.mapFavorited,
@@ -64,7 +76,8 @@ class PocketRetrieve:
 
     def mapState(self):
         print '(All, Archived, Unread)'
-        state = raw_input('Please enter the state you would like to retrieve: ').lower()
+        state = raw_input('Please enter the state you would like to '
+                          'retrieve: ').lower()
         matchedState = {
             'all': pocket_constants.stateAll,
             'archived': pocket_constants.stateArchived,
@@ -77,7 +90,8 @@ class PocketRetrieve:
 
     def mapFavorited(self):
         print '(Favorited, Not Favorited)'
-        favorite = raw_input('Please enter the favorited state you would like to retrieve: ').lower()
+        favorite = raw_input('Please enter the favorited state you would '
+                             'like to retrieve: ').lower()
         matchedFavorite = {
             'favorited': pocket_constants.favorited,
             'not favorited': pocket_constants.notFavorited
@@ -89,7 +103,8 @@ class PocketRetrieve:
 
     def mapContentType(self):
         print '(Article, Image, Video)'
-        contentType = raw_input('Please enter the content type you would like to retrieve: ').lower()
+        contentType = raw_input('Please enter the content type you would '
+                                'like to retrieve: ').lower()
         matchedContentType = {
             'article': pocket_constants.contentTypeArticle,
             'image': pocket_constants.contentType,
@@ -102,7 +117,8 @@ class PocketRetrieve:
 
     def mapSort(self):
         print '(newest, oldest, site, title)'
-        sort = raw_input('Please enter the sorting you would like to apply: ').lower()
+        sort = raw_input('Please enter the sorting you would '
+                         'like to apply: ').lower()
         matchedSort = {
             'newest': pocket_constants.sortNewest,
             'oldest': pocket_constants.sortOldest,
@@ -116,7 +132,8 @@ class PocketRetrieve:
 
     def mapDetailType(self):
         print '(simple, complete)'
-        detailType = raw_input('Please enter the detail level you would like to retrieve: ').lower()
+        detailType = raw_input('Please enter the detail level you would '
+                               'like to retrieve: ').lower()
         matchedDetailType = {
             'simple': pocket_constants.detailTypeSimple,
             'complete': pocket_constants.detailTypeComplete
