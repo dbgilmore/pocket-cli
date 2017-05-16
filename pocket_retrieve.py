@@ -135,8 +135,8 @@ class PocketRetrieve:
         detailType = raw_input('Please enter the detail level you would '
                                'like to retrieve: ').lower()
         matchedDetailType = {
-            'simple': pocket_constants.detailTypeSimple,
-            'complete': pocket_constants.detailTypeComplete
+                             'simple': pocket_constants.detailTypeSimple,
+                             'complete': pocket_constants.detailTypeComplete
         }.get(detailType, "No match")
         if matchedDetailType == 'No match':
             return self.mapDetailType()

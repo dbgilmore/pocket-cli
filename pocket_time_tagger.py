@@ -31,6 +31,7 @@ class PocketTimeTagger:
         return int(pocket_constants.iRoundBase *
                    round(float(iNumber) / pocket_constants.iRoundBase))
 
+
     def tagUntaggedItems(self):
         """
         Do the thing.
