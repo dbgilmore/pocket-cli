@@ -3,15 +3,16 @@ from pocket_retrieve import PocketRetrieve
 from pocket_modify import PocketModify
 from pocket_time_tagger import PocketTimeTagger
 
+
 class Pocket:
 
     def __init__(self):
         self.pocketRetriever = PocketRetrieve()
         self.pocketModifier = PocketModify()
         self.pocketTimeTagger = PocketTimeTagger()
-        self.programRunning = True;
+        self.programRunning = True
 
-    def mapInitialInput(self,x):
+    def mapInitialInput(self, x):
         return {
             'R': self.pocketRetriever.preRetrieve,
             'A': self.fakeNews,
@@ -33,7 +34,8 @@ class Pocket:
             print pocket_constants.modifyText
             print pocket_constants.tagUntaggedItemsText
             print pocket_constants.exitText
-            selectedOption = raw_input("Please select one of the above options: ").upper()
+            selectedOption =
+            raw_input("Please select one of the above options: ").upper()
             self.mapInitialInput(selectedOption)()
 
 if __name__ == '__main__':

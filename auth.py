@@ -1,11 +1,10 @@
 import requests
-import sys
 import os.path
 import json
 import webbrowser
 
 AUTH_URL = ("https://getpocket.com/auth/authorize?"
-        "request_token=%s&redirect_uri=%s")
+            "request_token=%s&redirect_uri=%s")
 REQUEST_TOKEN_URL = "https://getpocket.com/v3/oauth/request"
 AUTH_TOKEN_URL = "https://getpocket.com/v3/oauth/authorize"
 REDIRECT_URL = "http://www.success.com"
@@ -13,8 +12,9 @@ CONFIG_FILE = '.creds'
 access_token = None
 consumer_key = None
 
+
 def auth():
-    if os.path.isfile(CONFIG_FILE) != True:
+    if os.path.isfile(CONFIG_FILE) is not True:
         creds_file = open(CONFIG_FILE, "w+")
         creds_file.write('{"access_token":"token","consumer_key":"key"}')
 
@@ -23,17 +23,19 @@ def auth():
     access_token = None
 
     if creds['consumer_key'] == 'key':
-        creds['consumer_key'] = raw_input("Please paste your consumer_key and please enter: ")
+        creds['consumer_key'] = raw_input("Please paste your consumer_key "
+                                          "and please enter: ")
         consumer_key = creds['consumer_key']
     else:
-        consumer_key, access_token = get_credentials_from_file(creds)
+        consumer_key, access_token = get_creds_from_file(creds)
         print "You are already authorized."
 
     if not access_token:
         access_token, username = access_token_flow(consumer_key)
         print "SUCCESS."
 
-    config = '{"consumer_key":"' + consumer_key + '","access_token":"'+  access_token + '"}'
+    config = '{"consumer_key":"' + consumer_key
+    '","access_token":"''' + access_token + '"}'
     creds_file = open(CONFIG_FILE, 'w')
     creds_file.write(config)
     creds_file.close()
@@ -42,39 +44,52 @@ def auth():
     creds_file.close()
     return creds
 
+
 def access_token_flow(consumer_key):
-    code = get_authentication_token(consumer_key)
+    code = get_authentication_code(consumer_key)
     redirect_user(code)
     return get_access_token(consumer_key, code)
 
-def get_authentication_token(consumer_key):
-    payload = {'consumer_key':consumer_key, 'redirect_uri':REDIRECT_URL}
-    headers = {'content-type':'application/json', 'charset':'UTF-8', 'X-Accept': 'application/json'}
 
-    response = requests.post(REQUEST_TOKEN_URL, data=json.dumps(payload), headers=headers)
+def get_authentication_code(consumer_key):
+    payload = {'consumer_key': consumer_key, 'redirect_uri': REDIRECT_URL}
+    headers = {'content-type': 'application/json',
+               'charset': 'UTF-8', 'X-Accept': 'application/json'}
+
+    response = requests.post(REQUEST_TOKEN_URL,
+                             data=json.dumps(payload),
+                             headers=headers)
     resp = json.loads(response.text)
     return resp.get('code')
 
+
 def redirect_user(code):
-    print 'Please follow the instructions in the web browser that is about to open, then return here'
+    print 'Please follow the instructions in the web browser that is about '
+    'to open, then return here'
     raw_input("Press enter to proceed.")
     url = AUTH_URL % (code, REDIRECT_URL)
     print url
     chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
 
     webbrowser.get(chrome_path).open(url)
-    raw_input('Please enter when the browser redirects you to ' + REDIRECT_URL +':')
+    raw_input('Please press enter once the browser has redirected you '
+              'to ' + REDIRECT_URL + ':')
+
 
 def get_access_token(consumer_key, code):
-    payload = {'code':code,'consumer_key':consumer_key}
-    headers = {'content-type':'application/json', 'charset':'UTF-8', 'X-Accept': 'application/json'}
+    payload = {'code': code, 'consumer_key': consumer_key}
+    headers = {'content-type': 'application/json',
+               'charset': 'UTF-8',
+               'X-Accept': 'application/json'}
 
-    response = requests.post(AUTH_TOKEN_URL, data=json.dumps(payload), headers=headers)
+    response = requests.post(AUTH_TOKEN_URL,
+                             data=json.dumps(payload),
+                             headers=headers)
     body = response.json()
     return body["access_token"], body["username"]
 
 
-def get_credentials_from_file(config):
+def get_creds_from_file(config):
     return (config['consumer_key'], config['access_token'])
 
 if __name__ == "__main__":
