@@ -34,8 +34,8 @@ class Pocket:
             print pocket_constants.modifyText
             print pocket_constants.tagUntaggedItemsText
             print pocket_constants.exitText
-            selectedOption =
-            raw_input("Please select one of the above options: ").upper()
+            selectedOption = raw_input('Please select one of the ''
+                                       'above options: ').upper()
             self.mapInitialInput(selectedOption)()
 
 

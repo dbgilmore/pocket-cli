@@ -17,18 +17,19 @@ class PocketRetrieve:
         choiceslist = choices.replace(' ', '').split(',')
 
         for choice in choiceslist:
+            if choice != '':
+                response = self.mapRetrieveInput(choice)
+                # Nasty hack - check if the returned thing is a function.
+                # If it is, call it
+                if callable(response):
+                    response = response()
+                    optionParams.update(response)
+                else:
+                    optionParams[choice] = response.get(choice)
 
-            response = self.mapRetrieveInput(choice)
-            # Nasty hack - check if the returned thing is a function.
-            # If it is, call it
-            if callable(response):
-                response = response()
-
-            optionParams[choice] = response.get(choice)
-
-            if response.get(choice) == '_to_be_replaced_':
-                optionParams[choice] = raw_input('Please enter a '
-                                                 'value for ' + choice + ':')
+                if response.get(choice) == '_to_be_replaced_':
+                    optionParams[choice] = raw_input('Please enter a value '
+                                                     'for ' + choice + ':')
 
         return self.retrieve(optionParams)
 
@@ -50,8 +51,28 @@ class PocketRetrieve:
                                   headers=pocket_constants.oHeaders)
         #  TODO do something more with the response
 
+        aArticles = json.loads(oResponse.text).get('list')
         pp = pprint.PrettyPrinter(indent=2)
-        pp.pprint(json.loads(oResponse.text))
+        # pp.pprint(aArticles)
+        iTotalReadingLength = 0
+        for x in aArticles:
+            print
+            print 'Title: ' + aArticles[x].get('resolved_title')
+            print 'URL:   ' + aArticles[x].get('resolved_url')
+            if 'tags' in aArticles[x]:
+                tags = []
+                for tag in aArticles[x].get('tags'):
+                    tags.append(str(tag))
+                print 'Tags:  ' + ', '.join(tags)
+            iTotalReadingLength += int(aArticles[x].get('word_count'))
+            # pp.pprint(aArticles[x])
+            print
+        print str(len(aArticles)) + " articles matched your reqeust"
+        strTotalReadingTime = str((iTotalReadingLength /
+                                   pocket_constants.iWordsPerMinute) / 60)
+        print ('Total reading time for these articles is ' +
+               strTotalReadingtime + ' hours')
+
         return json.loads(oResponse.text)
 
     def mapRetrieveInput(self, x):
@@ -134,6 +155,7 @@ class PocketRetrieve:
         print '(simple, complete)'
         detailType = raw_input('Please enter the detail level you would '
                                'like to retrieve: ').lower()
+        print detailType
         matchedDetailType = {
             'simple': pocket_constants.detailTypeSimple,
             'complete': pocket_constants.detailTypeComplete

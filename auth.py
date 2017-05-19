@@ -15,11 +15,14 @@ consumer_key = None
 
 def auth():
     if os.path.isfile(CONFIG_FILE) is not True:
-        creds_file = open(CONFIG_FILE, "w+")
-        creds_file.write('{"access_token":"token","consumer_key":"key"}')
+        with open(CONFIG_FILE, "w+") as creds_file:
+            creds_file.write('{"access_token":"token","consumer_key":"key"}')
+        # creds_file = open(CONFIG_FILE, "w+")
+        # creds_file.write('{"access_token":"token","consumer_key":"key"}')
 
-    creds_file = open(CONFIG_FILE, "r+")
-    creds = json.loads(creds_file.read())
+    with open(CONFIG_FILE, "r+") as creds_file:
+        creds = json.loads(creds_file.read())
+
     access_token = None
 
     if creds['consumer_key'] == 'key':
@@ -34,14 +37,14 @@ def auth():
         access_token, username = access_token_flow(consumer_key)
         print "SUCCESS."
 
-    config = '{"consumer_key":"' + consumer_key
-    '","access_token":"''' + access_token + '"}'
-    creds_file = open(CONFIG_FILE, 'w')
-    creds_file.write(config)
-    creds_file.close()
-    creds_file = open(CONFIG_FILE, 'r')
-    creds = json.loads(creds_file.read())
-    creds_file.close()
+    config = ('{"consumer_key":"' + consumer_key +
+              '","access_token":"' + access_token + '"}')
+
+    with open(CONFIG_FILE, 'w') as creds_file:
+        creds_file.write(config)
+
+    with open(CONFIG_FILE, 'r') as creds_file:
+        creds = json.loads(creds_file.read())
     return creds
 
 
