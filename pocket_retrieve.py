@@ -71,7 +71,7 @@ class PocketRetrieve:
         strTotalReadingTime = str((iTotalReadingLength /
                                    pocket_constants.iWordsPerMinute) / 60)
         print ('Total reading time for these articles is ' +
-               strTotalReadingtime + ' hours')
+               strTotalReadingTime + ' hours')
 
         return json.loads(oResponse.text)
 
