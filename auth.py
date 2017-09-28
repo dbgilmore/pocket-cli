@@ -2,6 +2,7 @@ import requests
 import os.path
 import json
 import webbrowser
+import time
 
 AUTH_URL = ("https://getpocket.com/auth/authorize?"
             "request_token=%s&redirect_uri=%s")
@@ -16,9 +17,7 @@ consumer_key = None
 def auth():
     if os.path.isfile(CONFIG_FILE) is not True:
         with open(CONFIG_FILE, "w+") as creds_file:
-            creds_file.write('{"access_token":"token","consumer_key":"key"}')
-        # creds_file = open(CONFIG_FILE, "w+")
-        # creds_file.write('{"access_token":"token","consumer_key":"key"}')
+            creds_file.write('{"access_token":"token","consumer_key":"key","since":"since"}')
 
     with open(CONFIG_FILE, "r+") as creds_file:
         creds = json.loads(creds_file.read())
@@ -38,7 +37,8 @@ def auth():
         print "SUCCESS."
 
     config = ('{"consumer_key":"' + consumer_key +
-              '","access_token":"' + access_token + '"}')
+              '","access_token":"' + access_token +
+              '","since":0}')
 
     with open(CONFIG_FILE, 'w') as creds_file:
         creds_file.write(config)

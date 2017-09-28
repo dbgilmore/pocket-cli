@@ -9,7 +9,7 @@ class PocketRetrieve:
     def __init__(self):
         pass
 
-    def preRetrieve(self):
+    def cliRetrieve(self):
         optionParams = {}
         print pocket_constants.retrieveOptions
         choices = raw_input('Please input your choices from the above, '
@@ -31,7 +31,9 @@ class PocketRetrieve:
                     optionParams[choice] = raw_input('Please enter a value '
                                                      'for ' + choice + ':')
 
-        return self.retrieve(optionParams)
+        aArticles = self.retrieve(optionParams).get('list')
+
+        self.postRetrieve(aArticles)
 
     def retrieve(self, optionalParameters=None):
         """
@@ -49,9 +51,10 @@ class PocketRetrieve:
         oResponse = requests.post(pocket_constants.strRetrieveURL,
                                   data=json.dumps(oPayload),
                                   headers=pocket_constants.oHeaders)
-        #  TODO do something more with the response
 
-        aArticles = json.loads(oResponse.text).get('list')
+        return json.loads(oResponse.text)
+
+    def postRetrieve(self, aArticles):
         pp = pprint.PrettyPrinter(indent=2)
         # pp.pprint(aArticles)
         iTotalReadingLength = 0
@@ -73,7 +76,6 @@ class PocketRetrieve:
         print ('Total reading time for these articles is ' +
                strTotalReadingTime + ' hours')
 
-        return json.loads(oResponse.text)
 
     def mapRetrieveInput(self, x):
         matchedInput = {
@@ -164,6 +166,3 @@ class PocketRetrieve:
             return self.mapDetailType()
         else:
             return matchedDetailType
-
-    def postRetrieve():
-        pass

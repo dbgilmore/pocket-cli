@@ -36,7 +36,6 @@ since = {'since': '_to_be_replaced_'}
 count = {'count': '_to_be_replaced_'}
 offset = {'offset': '_to_be_replaced_'}
 
-
 iWordsPerMinute = 250
 iRoundBase = 5
 strUntagged = '_untagged_'
@@ -50,6 +49,7 @@ retrieveText = '(R)etrieve some articles'
 modifyText = '(M)odify an existing article in Pocket'
 addText = '(A)dd an article to Pocket'
 tagUntaggedItemsText = '(T)ag untagged items based on estimated time to read'
+graphifyText = '(G)raphify'
 exitText = '(E)xit'
 
 # TODO give more detail

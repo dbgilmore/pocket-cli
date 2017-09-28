@@ -2,6 +2,7 @@ import pocket_constants
 from pocket_retrieve import PocketRetrieve
 from pocket_modify import PocketModify
 from pocket_time_tagger import PocketTimeTagger
+from pocket_graphify import PocketGraphify
 
 
 class Pocket:
@@ -10,14 +11,16 @@ class Pocket:
         self.pocketRetriever = PocketRetrieve()
         self.pocketModifier = PocketModify()
         self.pocketTimeTagger = PocketTimeTagger()
+        self.pocketGraphify = PocketGraphify()
         self.programRunning = True
 
     def mapInitialInput(self, x):
         return {
-            'R': self.pocketRetriever.preRetrieve,
+            'R': self.pocketRetriever.cliRetrieve,
             'A': self.fakeNews,
             'M': self.pocketModifier.preModify,
             'T': self.pocketTimeTagger.tagUntaggedItems,
+            'G': self.pocketGraphify.graphify,
             'E': self.terminate
         }.get(x, self.whatDoesTheUserWantToDo)
 
@@ -33,6 +36,7 @@ class Pocket:
             print pocket_constants.addText
             print pocket_constants.modifyText
             print pocket_constants.tagUntaggedItemsText
+            print pocket_constants.graphifyText
             print pocket_constants.exitText
             selectedOption = raw_input('Please select one of the '
                                        'above options: ').upper()
