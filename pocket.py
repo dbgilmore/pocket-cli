@@ -3,7 +3,7 @@ from pocket_retrieve import PocketRetrieve
 from pocket_modify import PocketModify
 from pocket_time_tagger import PocketTimeTagger
 from pocket_graphify import PocketGraphify
-
+from pocket_add import PocketAdd
 
 class Pocket:
 
@@ -12,12 +12,13 @@ class Pocket:
         self.pocketModifier = PocketModify()
         self.pocketTimeTagger = PocketTimeTagger()
         self.pocketGraphify = PocketGraphify()
+        self.pocketAdd = PocketAdd()
         self.programRunning = True
 
     def mapInitialInput(self, x):
         return {
             'R': self.pocketRetriever.cliRetrieve,
-            'A': self.fakeNews,
+            'A': self.pocketAdd.add,
             'M': self.pocketModifier.preModify,
             'T': self.pocketTimeTagger.tagUntaggedItems,
             'G': self.pocketGraphify.graphify,
