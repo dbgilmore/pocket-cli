@@ -18,11 +18,12 @@ class PocketGraphify:
 
         self.graphifyByTag()
         self.graphifyByYearMonth()
+        self.graphifyByAddedToRead()
 
     def graphifyByTag(self):
 
-        with open('pocket_json', "r+") as json_file:
-          output = json.loads(json_file.read())
+        with open('.pocket_json', "r+") as json_file:
+          output = json.loads(json_file.read()).get('list')
 
         dataRead = {'untagged': 0}
         dataUnread = {'untagged': 0}
@@ -72,11 +73,11 @@ class PocketGraphify:
         plotly.offline.plot({
             "data": [trace1, trace2],
             "layout": Layout(barmode='stack', title="Bar chart showing the number of articles in Pocket per tag", xaxis = {'type': 'category', 'title': 'Tag name'}, yaxis = {'title': 'Number of articles tagged'})
-        })
+        }, filename = "graphifyByTag.html")
 
     def graphifyByYearMonth(self):
-        with open('pocket_json', "r+") as json_file:
-          output = json.loads(json_file.read())
+        with open('.pocket_json', "r+") as json_file:
+          output = json.loads(json_file.read()).get('list')
 
         dataRead = {}
         dataUnread = {}
@@ -122,4 +123,35 @@ class PocketGraphify:
         plotly.offline.plot({
             "data": [trace1, trace2],
             "layout": Layout(barmode='stack', title="Bar chart showing the number of articles added to Pocket per month", xaxis = {'type': 'category', 'title': 'Month'}, yaxis = {'title': 'Number of articles added'})
-        })
+        }, filename = "graphifyByYearMonth.html")
+
+    def graphifyByAddedToRead(self):
+        with open('.pocket_json', "r+") as json_file:
+          output = json.loads(json_file.read()).get('list')
+
+
+        data = {}
+        date_format = '%Y-%m-%d %H:%M:%S'
+
+        for article in output:
+            if output[article].get('status') == '1':
+                dayAdded = datetime.datetime.fromtimestamp(
+                    int(output[article].get('time_added'))
+                ).strftime(date_format)
+
+                dayRead = datetime.datetime.fromtimestamp(
+                    int(output[article].get('time_read'))
+                ).strftime(date_format)
+
+                data[dayAdded] = dayRead;
+
+        data = OrderedDict(sorted(data.items(), key=lambda t: t[0]))
+        xaxis = data.keys()
+        yaxis = data.values()
+
+        trace1 = Scatter(x=xaxis, y=yaxis,mode='markers+text')
+        data = [trace1]
+
+
+
+        plotly.offline.plot(data, filename = "graphifyByAddedToRead.html")
