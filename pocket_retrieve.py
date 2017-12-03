@@ -93,7 +93,7 @@ class PocketRetrieve:
             'offset': pocket_constants.offset
         }.get(x, "No match")
         if matchedInput == 'No match':
-            return self.preRetrieve()
+            return self.cliRetrieve()
         else:
             return matchedInput
 
