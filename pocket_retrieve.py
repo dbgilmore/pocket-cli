@@ -67,7 +67,8 @@ class PocketRetrieve:
                 for tag in aArticles[x].get('tags'):
                     tags.append(str(tag))
                 print 'Tags:  ' + ', '.join(tags)
-            iTotalReadingLength += int(aArticles[x].get('word_count'))
+            if aArticles[x].get('word_count') is not None:
+                iTotalReadingLength += int(aArticles[x].get('word_count'))
             # pp.pprint(aArticles[x])
             print
         print str(len(aArticles)) + " articles matched your reqeust"
@@ -75,7 +76,6 @@ class PocketRetrieve:
                                    pocket_constants.iWordsPerMinute) / 60)
         print ('Total reading time for these articles is ' +
                strTotalReadingTime + ' hours')
-
 
     def mapRetrieveInput(self, x):
         matchedInput = {
