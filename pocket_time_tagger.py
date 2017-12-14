@@ -40,6 +40,6 @@ class PocketTimeTagger:
         oJSONPayload = []
         if oArticles.get('list'):
             for oArticle in oArticles.get('list').items():
-                if oArticle[1]['is_article'] == '1':
+                if 'is_article' in oArticle[1] and oArticle[1]['is_article'] == '1':
                     oJSONPayload.append(self.generateTag(oArticle[1]))
         self.pocketModifier.preModify(oJSONPayload)
