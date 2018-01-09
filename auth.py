@@ -67,16 +67,31 @@ def get_authentication_code(consumer_key):
 
 
 def redirect_user(code):
+    chrome_path = get_chrome_path()
     print 'Please follow the instructions in the web browser that is about '
     'to open, then return here'
     raw_input("Press enter to proceed.")
     url = AUTH_URL % (code, REDIRECT_URL)
     print url
-    chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
 
     webbrowser.get(chrome_path).open(url)
     raw_input('Please press enter once the browser has redirected you '
               'to ' + REDIRECT_URL + ':')
+
+
+def get_chrome_path():
+    while True:
+        print 'Which Operating System are you running?'
+        print '1: Mac OSX'
+        print '2: Linux'
+        input = raw_input()
+
+        if (input == '1'):
+            return 'open -a /Applications/Google\ Chrome.app %s'
+        elif (input == '2'):
+            return 'google-chrome'
+        else:
+            print 'Incorrect choice. Please try again'
 
 
 def get_access_token(consumer_key, code):
