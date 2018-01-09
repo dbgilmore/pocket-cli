@@ -82,13 +82,16 @@ def redirect_user(code):
 def get_chrome_path():
     while True:
         print 'Which Operating System are you running?'
-        print '1: Mac OSX'
-        print '2: Linux'
+        print '1: Windows'
+        print '2: Mac OS X'
+        print '3: Linux'
         input = raw_input()
 
         if (input == '1'):
-            return 'open -a /Applications/Google\ Chrome.app %s'
+            return 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
         elif (input == '2'):
+            return 'open -a /Applications/Google\ Chrome.app %s'
+        elif (input == '3'):
             return 'google-chrome'
         else:
             print 'Incorrect choice. Please try again'
