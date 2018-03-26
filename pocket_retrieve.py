@@ -24,12 +24,18 @@ class PocketRetrieve:
                 if callable(response):
                     response = response()
                     optionParams.update(response)
+                elif choice == "untagged":
+                    optionParams["tag"] = "_untagged_"
                 else:
                     optionParams[choice] = response.get(choice)
+
 
                 if response.get(choice) == '_to_be_replaced_':
                     optionParams[choice] = raw_input('Please enter a value '
                                                      'for ' + choice + ':')
+
+
+
 
         aArticles = self.retrieve(optionParams).get('list')
 
